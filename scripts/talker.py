@@ -49,13 +49,7 @@ def talker(velocity_data):
         rate.sleep()
 
     stop_command = Twist()
-    stop_command.linear.x = 0
-    stop_command.linear.y = 0
-    stop_command.linear.z = 0
 
-    stop_command.angular.x = 0
-    stop_command.angular.y = 0
-    stop_command.angular.z = 0
     pub.publish(stop_command)
     rospy.loginfo(stop_command)
     pub.publish(stop_command)

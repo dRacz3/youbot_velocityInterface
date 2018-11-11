@@ -14,39 +14,59 @@ class velocity_container():
         self.index = 0
 
     def getNext(self):
-        vx = self.data.iloc[self.index]['vx']
-        vy = self.data.iloc[self.index]['vy']
-        vomega = self.data.iloc[self.index]['omega']
+        try:
+            vx = self.data.iloc[self.index]['vx']
+            vy = self.data.iloc[self.index]['vy']
+            vomega = self.data.iloc[self.index]['omega']
+        except:
+            vx = 0
+            vy = 0
+            vomega = 0
         self.index += 1
         return vx,vy,vomega
 
+    def hasNext(self):
+        return self.index < self.length
 
-def talker():
+
+def talker(velocity_data):
     pub = rospy.Publisher('v_cmd', Twist, queue_size=10)
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
-    while not rospy.is_shutdown():
-        x = 1
-        y = 2
-        speed = 1
-        th = 0.1
-        turn = 1
+    while (not rospy.is_shutdown()) and velocity_data.hasNext():
+        vx,vy,omega = velocity_data.getNext()
         twist = Twist()
-        twist.linear.x = x*speed
-        twist.linear.y = y*speed
+        twist.linear.x = vx
+        twist.linear.y = vy
         twist.linear.z = 0
 
         twist.angular.x = 0
         twist.angular.y = 0
-        twist.angular.z = th*turn
+        twist.angular.z = omega
         pub.publish(twist)
         rospy.loginfo(twist)
         pub.publish(twist)
         rate.sleep()
 
+    stop_command = Twist()
+    stop_command.linear.x = 0
+    stop_command.linear.y = 0
+    stop_command.linear.z = 0
+
+    stop_command.angular.x = 0
+    stop_command.angular.y = 0
+    stop_command.angular.z = 0
+    pub.publish(stop_command)
+    rospy.loginfo(stop_command)
+    pub.publish(stop_command)
+
 if __name__ == '__main__':
     try:
         arguments = sys.argv[1:]
-        talker()
+        print('launched with argument:', arguments)
+        loaded_df = pd.read_csv(arguments[0])
+        velocities = velocity_container(loaded_df)
+        print('Dataframe loaded! Starting publishing')
+        talker(velocities)
     except rospy.ROSInterruptException:
         pass

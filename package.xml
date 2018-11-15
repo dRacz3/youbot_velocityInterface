@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>youbot_velocityInterface</name>
+  <name>youbot_velocity_interface</name>
   <version>0.0.0</version>
   <description>The youbot velocity interface package</description>
 

@@ -7,34 +7,41 @@ import rospy
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
+
+"""
+This class acts as a container for the cartesian velocities.
+Iterator functions are implemented, this class can be used in
+a for loop to iterate through all elements.
+"""
 class velocity_container():
     def __init__(self,df):
         self.data = df
         self.length = len(self.data)
         self.index = 0
 
-    def getNext(self):
-        try:
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.index >= len(self.data):
+            raise StopIteration
+        else:
             vx = self.data.iloc[self.index]['vx']
             vy = self.data.iloc[self.index]['vy']
             vomega = self.data.iloc[self.index]['omega']
-        except:
-            vx = 0
-            vy = 0
-            vomega = 0
-        self.index += 1
-        return vx,vy,vomega
-
-    def hasNext(self):
-        return self.index < self.length
+            self.index+=1
+            return vx,vy,vomega
 
 
 def talker(velocity_data):
     pub = rospy.Publisher('v_cmd', Twist, queue_size=10)
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
-    while (not rospy.is_shutdown()) and velocity_data.hasNext():
-        vx,vy,omega = velocity_data.getNext()
+
+    for vx,vy,omega in velocity_data:
+        if rospy.is_shutdown():
+            break
+        else:
         twist = Twist()
         twist.linear.x = vx
         twist.linear.y = vy

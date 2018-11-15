@@ -22,7 +22,7 @@ class velocity_container():
     def __iter__(self):
         return self
 
-    def __next__(self):
+    def next(self):
         if self.index >= len(self.data):
             raise StopIteration
         else:
@@ -42,21 +42,19 @@ def talker(velocity_data):
         if rospy.is_shutdown():
             break
         else:
-        twist = Twist()
-        twist.linear.x = vx
-        twist.linear.y = vy
-        twist.linear.z = 0
+            twist = Twist()
+            twist.linear.x = vx
+            twist.linear.y = vy
+            twist.linear.z = 0
 
-        twist.angular.x = 0
-        twist.angular.y = 0
-        twist.angular.z = omega
-        pub.publish(twist)
-        rospy.loginfo(twist)
-        pub.publish(twist)
-        rate.sleep()
-
+            twist.angular.x = 0
+            twist.angular.y = 0
+            twist.angular.z = omega
+            pub.publish(twist)
+            rospy.loginfo(twist)
+            pub.publish(twist)
+            rate.sleep()
     stop_command = Twist()
-
     pub.publish(stop_command)
     rospy.loginfo(stop_command)
     pub.publish(stop_command)

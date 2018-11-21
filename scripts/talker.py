@@ -15,26 +15,28 @@ a for loop to iterate through all elements.
 """
 class velocity_container():
     def __init__(self,df):
-        self.data = df
-        self.length = len(self.data)
+        self.data = df.to_dict()
+        self.length = len(df)
         self.index = 0
+        print('Velocity container initialized, data length is : {0}'.format(self.length))
 
     def __iter__(self):
         return self
 
     def next(self):
-        if self.index >= len(self.data):
+        if self.index >= self.length:
             raise StopIteration
         else:
-            vx = self.data.iloc[self.index]['vx']
-            vy = self.data.iloc[self.index]['vy']
-            vomega = self.data.iloc[self.index]['omega']
+            vx = self.data['vx'][self.index]
+            vy = self.data['vy'][self.index]
+            vomega = self.data['omega'][self.index]
             self.index+=1
+            print 'next called with :{0},{1},{2}'.format(vx,vy,vomega)
             return vx,vy,vomega
 
 
 def talker(velocity_data):
-    pub = rospy.Publisher('v_cmd', Twist, queue_size=10)
+    pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
 

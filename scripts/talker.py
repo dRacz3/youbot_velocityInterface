@@ -58,7 +58,7 @@ class velocity_container():
 def talker(velocity_data):
     pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     rospy.init_node('talker', anonymous=True, log_level=rospy.WARN)
-    rate = rospy.Rate(10) # 10hz
+    rate = rospy.Rate(100) # 100hz
 
     for vx,vy,omega in velocity_data:
         if rospy.is_shutdown():

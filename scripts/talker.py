@@ -65,9 +65,12 @@ if __name__ == '__main__':
     try:
         arguments = sys.argv[1:]
         print('launched with argument:', arguments)
-        loaded_df = pd.read_csv(arguments[0])
-        velocities = velocity_container(loaded_df)
-        print('Dataframe loaded! Starting publishing')
-        talker(velocities)
+        if not arguments:
+			print("\033[91m Missing argument for the input file containing the velocities!\033[0m")
+        else:
+			loaded_df = pd.read_csv(arguments[0])
+			velocities = velocity_container(loaded_df)
+			print('Dataframe loaded! Starting publishing')
+			talker(velocities)
     except rospy.ROSInterruptException:
         pass
